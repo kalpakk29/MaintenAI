@@ -1,16 +1,7 @@
-import fitz
-import pytesseract
-
+import os
 from pathlib import Path
-from pdf2image import convert_from_path
 
-# Tell Tesseract exactly where it is
-pytesseract.pytesseract.tesseract_cmd = (
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-)
-
-# Tell pdf2image exactly where Poppler is
-POPPLER_PATH = r"D:\poppler-26.02.0\Library\bin"
+import fitz
 
 
 def extract_text(pdf_path: Path) -> str:
@@ -18,7 +9,8 @@ def extract_text(pdf_path: Path) -> str:
     Extract text from a PDF.
 
     1. Try normal PyMuPDF extraction.
-    2. If little/no text is found, fall back to OCR.
+    2. If the PDF is scanned, try OCR.
+    3. If OCR dependencies are unavailable, fail gracefully.
     """
 
     document = fitz.open(pdf_path)
@@ -30,31 +22,56 @@ def extract_text(pdf_path: Path) -> str:
 
     document.close()
 
-    # Normal searchable PDF
+    # Searchable PDF
     if len(text.strip()) > 100:
         print("✅ Text PDF detected.")
         return text
 
-    print("⚠️ Scanned PDF detected. Running OCR...")
+    print("⚠️ Scanned PDF detected. Attempting OCR...")
 
-    images = convert_from_path(
-        str(pdf_path),
-        poppler_path=POPPLER_PATH,
-        dpi=300,
-    )
+    try:
+        from pdf2image import convert_from_path
+        import pytesseract
 
-    ocr_text = ""
+        # Windows development machine
+        if os.name == "nt":
+            pytesseract.pytesseract.tesseract_cmd = (
+                r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+            )
 
-    for i, image in enumerate(images):
-        print(f"OCR Page {i + 1}/{len(images)}")
+            poppler_path = r"D:\poppler-26.02.0\Library\bin"
 
-        page_text = pytesseract.image_to_string(
-            image,
-            lang="eng",
-        )
+            images = convert_from_path(
+                str(pdf_path),
+                poppler_path=poppler_path,
+                dpi=300,
+            )
 
-        ocr_text += page_text + "\n"
+        # Linux (Render)
+        else:
+            images = convert_from_path(
+                str(pdf_path),
+                dpi=300,
+            )
 
-    print(f"✅ OCR Complete. Characters: {len(ocr_text)}")
+        ocr_text = ""
 
-    return ocr_text
+        for i, image in enumerate(images):
+            print(f"OCR Page {i + 1}/{len(images)}")
+
+            page_text = pytesseract.image_to_string(
+                image,
+                lang="eng",
+            )
+
+            ocr_text += page_text + "\n"
+
+        print(f"✅ OCR Complete. Characters: {len(ocr_text)}")
+
+        return ocr_text
+
+    except Exception as e:
+        print(f"⚠️ OCR unavailable: {e}")
+        print("Returning extracted text only.")
+
+        return text
