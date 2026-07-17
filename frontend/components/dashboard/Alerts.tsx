@@ -1,24 +1,24 @@
-import { TriangleAlert } from "lucide-react";
+"use client";
 
-const alerts = [
-  {
-    machine: "Hydraulic Pump",
-    level: "Critical",
-    color: "text-red-400",
-  },
-  {
-    machine: "Conveyor Belt",
-    level: "Warning",
-    color: "text-yellow-400",
-  },
-  {
-    machine: "CNC Machine #12",
-    level: "Healthy",
-    color: "text-green-400",
-  },
-];
+import { TriangleAlert } from "lucide-react";
+import { useDashboard } from "@/hooks/useDashboard";
 
 export default function Alerts() {
+  const { alerts } = useDashboard();
+
+  function getColor(status: string) {
+    switch (status.toLowerCase()) {
+      case "critical":
+        return "text-red-400";
+
+      case "warning":
+        return "text-yellow-400";
+
+      default:
+        return "text-green-400";
+    }
+  }
+
   return (
     <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
 
@@ -34,22 +34,32 @@ export default function Alerts() {
 
       <div className="space-y-4">
 
-        {alerts.map((alert) => (
-          <div
-            key={alert.machine}
-            className="rounded-xl bg-slate-800 p-4 transition hover:bg-slate-700"
-          >
-
-            <p className="font-semibold text-white">
-              {alert.machine}
-            </p>
-
-            <p className={`mt-2 ${alert.color}`}>
-              {alert.level}
-            </p>
-
+        {alerts.length === 0 ? (
+          <div className="rounded-xl bg-slate-800 p-4 text-slate-400">
+            No active alerts.
           </div>
-        ))}
+        ) : (
+          alerts.map((machine) => (
+            <div
+              key={machine.id}
+              className="rounded-xl bg-slate-800 p-4 transition hover:bg-slate-700"
+            >
+
+              <p className="font-semibold text-white">
+                {machine.name}
+              </p>
+
+              <p className={`mt-2 font-semibold ${getColor(machine.ai_status)}`}>
+                {machine.ai_status}
+              </p>
+
+              <p className="mt-2 text-sm text-slate-400">
+                Health Score: {machine.health_score}%
+              </p>
+
+            </div>
+          ))
+        )}
 
       </div>
 

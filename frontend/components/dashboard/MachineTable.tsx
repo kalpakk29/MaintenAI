@@ -1,76 +1,75 @@
-const machines = [
-  {
-    name: "CNC Machine #12",
-    status: "Healthy",
-    health: "98%",
-    temp: "39°C",
-  },
-  {
-    name: "Hydraulic Pump",
-    status: "Critical",
-    health: "41%",
-    temp: "82°C",
-  },
-  {
-    name: "Conveyor Belt",
-    status: "Warning",
-    health: "69%",
-    temp: "63°C",
-  },
-  {
-    name: "Boiler Unit",
-    status: "Healthy",
-    health: "96%",
-    temp: "41°C",
-  },
-];
+"use client";
 
-export default function MachineTable() {
+import {
+  Cpu,
+  ShieldCheck,
+  TriangleAlert,
+  Activity,
+} from "lucide-react";
+
+import { useDashboard } from "@/hooks/useDashboard";
+
+export default function StatsCards() {
+  const { stats } = useDashboard();
+
+  const cards = [
+    {
+      title: "Total Machines",
+      value: stats.total,
+      icon: Cpu,
+      color: "text-blue-400",
+    },
+    {
+      title: "Healthy",
+      value: stats.healthy,
+      icon: ShieldCheck,
+      color: "text-green-400",
+    },
+    {
+      title: "Warning",
+      value: stats.warning,
+      icon: Activity,
+      color: "text-yellow-400",
+    },
+    {
+      title: "Critical",
+      value: stats.critical,
+      icon: TriangleAlert,
+      color: "text-red-400",
+    },
+  ];
+
   return (
-    <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6">
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+      {cards.map((card) => {
+        const Icon = card.icon;
 
-      <h2 className="mb-6 text-xl font-bold text-white">
-        Machine Status
-      </h2>
+        return (
+          <div
+            key={card.title}
+            className="rounded-3xl border border-slate-800 bg-slate-900 p-6 transition hover:border-blue-500"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-slate-400">
+                  {card.title}
+                </p>
 
-      <table className="w-full">
+                <h2
+                  className={`mt-3 text-4xl font-black ${card.color}`}
+                >
+                  {card.value}
+                </h2>
+              </div>
 
-        <thead className="text-left text-slate-400">
-
-          <tr>
-            <th className="pb-4">Machine</th>
-            <th>Status</th>
-            <th>Health</th>
-            <th>Temp</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-
-          {machines.map((machine) => (
-            <tr
-              key={machine.name}
-              className="border-t border-slate-800"
-            >
-
-              <td className="py-5 text-white">
-                {machine.name}
-              </td>
-
-              <td>{machine.status}</td>
-
-              <td>{machine.health}</td>
-
-              <td>{machine.temp}</td>
-
-            </tr>
-          ))}
-
-        </tbody>
-
-      </table>
-
+              <Icon
+                size={34}
+                className={card.color}
+              />
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

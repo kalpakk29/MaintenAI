@@ -1,3 +1,6 @@
+"use client";
+
+import Link from "next/link";
 import { Bot } from "lucide-react";
 
 export default function AIChatCard() {
@@ -32,9 +35,11 @@ export default function AIChatCard() {
 
       </div>
 
-      <button className="mt-6 w-full rounded-xl bg-blue-600 py-3 font-semibold hover:bg-blue-500">
-        Open AI Assistant
-      </button>
+      <Link href="/assistant">
+        <button className="mt-6 w-full rounded-xl bg-blue-600 py-3 font-semibold transition hover:bg-blue-500">
+          Open AI Assistant
+        </button>
+      </Link>
 
     </div>
   );

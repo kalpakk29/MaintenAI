@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Bot,
   FileText,
@@ -38,11 +39,18 @@ export default function Features() {
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {features.map((feature) => (
-            <div
+            <Link
+              href="/coming-soon"
               key={feature.title}
-              className="rounded-2xl border border-slate-800 bg-slate-900 p-8 transition-all duration-300 hover:-translate-y-2 hover:border-blue-500"
+              className="relative rounded-2xl border border-slate-800 bg-slate-900 p-8 transition-all duration-300 hover:-translate-y-2 hover:border-blue-500"
             >
-              <div className="mb-5 text-blue-500">{feature.icon}</div>
+              <span className="absolute right-4 top-4 rounded-full bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-300">
+                Coming Soon
+              </span>
+
+              <div className="mb-5 text-blue-500">
+                {feature.icon}
+              </div>
 
               <h3 className="mb-3 text-2xl font-bold">
                 {feature.title}
@@ -51,7 +59,7 @@ export default function Features() {
               <p className="text-slate-400">
                 {feature.description}
               </p>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
