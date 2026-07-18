@@ -57,7 +57,7 @@ export default function ChatWindow() {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/chat?machine_id=${selectedMachine}&question=${encodeURIComponent(
+        `https://maintenai-production.up.railway.app/chat?machine_id=${selectedMachine}&question=${encodeURIComponent(
           question
         )}`
       );

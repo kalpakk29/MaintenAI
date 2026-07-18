@@ -26,7 +26,7 @@ export default function UploadManual() {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/upload-manual",
+        "https://maintenai-production.up.railway.app/upload-manual",
         {
           method: "POST",
           body: formData,
