@@ -20,9 +20,13 @@ app = FastAPI(
     version="2.0.0",
 )
 
+# Allow both local development and deployed frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://maintenai-production-4923.up.railway.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
